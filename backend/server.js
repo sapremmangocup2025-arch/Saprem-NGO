@@ -9,37 +9,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ✅ Allowed frontend origins
-const allowedOrigins = [
-  "https://sapremcompetition.vercel.app",
-  "http://localhost:8080"
-];
-
-// ✅ CORS middleware (MUST be before routes)
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // allow server-to-server, Postman, curl
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("CORS not allowed"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  })
-);
-
-// ✅ Handle preflight properly (NO cors() here)
-app.use((req, res, next) => {
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
+app.use(cors({
+  origin: "https://sapremcompetition.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 
 // Routes
 app.use("/api/auth", require("./src/routes/auth"));
