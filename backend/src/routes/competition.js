@@ -14,7 +14,7 @@ router.post("/create", auth, adminOnly, createCompetition);
 /**
  * Admin + Village
  */
-router.get("/", auth, getCompetitions);
+router.get("/", getCompetitions);
 
 /**
  * Admin only: villages inside competition
