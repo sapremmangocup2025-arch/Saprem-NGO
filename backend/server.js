@@ -8,20 +8,24 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ✅ Allowed frontend origins
 const allowedOrigins = [
   "https://sapremcompetition.vercel.app",
   "http://localhost:8080"
 ];
 
+// ✅ CORS middleware (MUST be before routes)
 app.use(
   cors({
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
+      // allow server-to-server, Postman, curl
       if (!origin) return callback(null, true);
+
       if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+        return callback(null, true);
       }
+
+      return callback(new Error("CORS not allowed"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -29,8 +33,15 @@ app.use(
   })
 );
 
-app.options("*", cors());
+// ✅ Handle preflight properly (NO cors() here)
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
+// Routes
 app.use("/api/auth", require("./src/routes/auth"));
 app.use("/api/application", require("./src/routes/application"));
 app.use("/api/admin", require("./src/routes/admin"));
@@ -40,6 +51,7 @@ app.use("/api/category", require("./src/routes/category"));
 app.use("/api/report", require("./src/routes/report"));
 app.use("/api/admin", require("./src/routes/adminVillage"));
 
+// DB + Server
 connect().then(() => {
   app.listen(process.env.PORT, () =>
     console.log("Server running on port", process.env.PORT)
