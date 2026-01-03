@@ -1,6 +1,7 @@
 const Village = require("../models/Village");
 const QuestionCategory = require("../models/QuestionCategory");
 const VillageSubmission = require("../models/VillageSubmission");
+const { normalizeCloudinaryUrl } = require("../config/cloudinaryUrl");
 
 
 exports.submitBaseline = async (req, res) => {
@@ -35,7 +36,7 @@ exports.submitBaseline = async (req, res) => {
 
     village.baseline = {
       ...baselineData,
-      proofUrl: req.file?.path || ""
+      proofUrl: normalizeCloudinaryUrl(req.file?.path) || ""
     };
 
     village.status = "baseline_submitted";
@@ -77,7 +78,7 @@ exports.submitCategory = async (req, res) => {
     const proofMap = {};
     if (req.files && req.files.length > 0) {
       req.files.forEach(file => {
-        proofMap[file.originalname] = file.path;
+        proofMap[file.originalname] = normalizeCloudinaryUrl(file.path);
       });
     }
 

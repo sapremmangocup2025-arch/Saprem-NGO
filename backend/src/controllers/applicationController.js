@@ -1,11 +1,13 @@
 const Village = require("../models/Village");
+const { normalizeCloudinaryUrl } = require("../config/cloudinaryUrl");
+
 
 exports.applyVillage = async (req, res) => {
   try {
     const { villageName, email, competition } = req.body;
 
     // Cloudinary uploaded file URL
-    const letterUrl = req.file?.path;
+    const letterUrl = normalizeCloudinaryUrl(req.file?.path);
 
     if (!letterUrl) {
       return res.status(400).json({
