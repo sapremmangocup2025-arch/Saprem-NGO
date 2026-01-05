@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // ✅ Allowed frontend origins
 app.use(cors({
-  origin: "https://sapremcompetition.vercel.app",
+  origin: "https://competitions.sapremngo.in",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
