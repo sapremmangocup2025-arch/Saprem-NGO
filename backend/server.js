@@ -25,6 +25,8 @@ app.use("/api/competition", require("./src/routes/competition"));
 app.use("/api/category", require("./src/routes/category"));
 app.use("/api/report", require("./src/routes/report"));
 app.use("/api/admin", require("./src/routes/adminVillage"));
+app.use("/api/pride-survey", require("./src/routes/prideSurvey"));
+
 
 // DB + Server
 connect().then(() => {
