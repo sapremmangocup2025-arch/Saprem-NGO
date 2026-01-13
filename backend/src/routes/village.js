@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { submitBaseline, getCategories, submitCategory } = require("../controllers/villageController");
+const { submitBaseline, getCategories, submitCategory, getMyCategorySubmission} = require("../controllers/villageController");
 const { auth } = require("../middleware/auth");
 const upload = require("../middleware/upload");
 
@@ -17,5 +17,12 @@ router.post(
   upload.array("proofs"),
   submitCategory
 );
+
+router.get(
+  "/category/:categoryId/submission",
+  auth,
+  getMyCategorySubmission
+);
+
 
 module.exports = router;

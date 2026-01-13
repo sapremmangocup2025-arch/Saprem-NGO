@@ -155,3 +155,29 @@ exports.submitCategory = async (req, res) => {
   }
 };
 
+exports.getMyCategorySubmission = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+
+    const submission = await VillageSubmission.findOne({
+      village: req.user.village,
+      category: categoryId
+    });
+
+    if (!submission) {
+      return res.json({
+        submitted: false,
+        answers: [],
+        totalMarks: 0
+      });
+    }
+
+    res.json({
+      submitted: true,
+      answers: submission.answers,
+      totalMarks: submission.totalMarks
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
