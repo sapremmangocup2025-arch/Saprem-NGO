@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const { registerAdmin, login ,getMyProfile,forgotPassword,updatePassword} = require("../controllers/authController");
+const { auth } = require("../middleware/auth");
+
 router.post("/register-admin", registerAdmin);
 router.post("/login", login);
 router.get("/me", auth, getMyProfile);
