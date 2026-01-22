@@ -7,7 +7,7 @@ const VillageSubmission = require("../models/VillageSubmission");
 exports.getAllVillages = async (req, res) => {
   try {
     const villages = await Village.find()
-      .populate("competition", "name","isActive")
+      .populate("competition", "name")
       .select(
         "name email status stage baseline competition applicationLetterUrl createdAt"
       );
