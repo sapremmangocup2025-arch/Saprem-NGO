@@ -55,6 +55,12 @@ exports.approveBaseline = async (req, res) => {
       return res.status(404).json({ message: "Village not found" });
     }
 
+    if (!village.competition.isActive) {
+    return res.status(400).json({
+      message: "Baseline approval is disabled for past competitions"
+    });
+  }
+
     // Prevent duplicate user creation
     if (village.user) {
       return res.status(400).json({ message: "Village already activated" });
