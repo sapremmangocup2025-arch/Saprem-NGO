@@ -109,6 +109,47 @@ exports.approveBaseline = async (req, res) => {
 };
 
 
+exports.rejectApplication = async (req, res) => {
+  try {
+    const village = await Village.findById(req.params.id);
+    if (!village) {
+      return res.status(404).json({ message: "Village not found" });
+    }
+
+    // Prevent rejecting an already active village
+    if (village.status === "active") {
+      return res.status(400).json({
+        message: "Active village cannot be rejected"
+      });
+    }
+
+    village.status = "rejected";
+    village.stage = "letter_uploaded"; // safe fallback
+    await village.save();
+
+    // Optional rejection email
+    await sendMail({
+      to: village.email,
+      subject: "Application Update – SAPREM NGO",
+      html: `
+        <p>Dear ${village.name},</p>
+        <p>Thank you for applying to the competition.</p>
+        <p>After review, your application could not be approved at this time.</p>
+        <p>You may apply again in future competitions.</p>
+        <p>Regards,<br/>SAPREM NGO</p>
+      `
+    });
+
+    res.json({
+      message: "Application rejected successfully"
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
 exports.updateVillageStage = async (req, res) => {
   try {
     const { stage } = req.body;
