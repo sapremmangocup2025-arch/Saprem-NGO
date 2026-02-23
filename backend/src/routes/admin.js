@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { approveApplication, approveBaseline ,updateVillageStage,rejectApplication} = require("../controllers/adminController");
 const { auth, adminOnly } = require("../middleware/auth");
+const {downloadVillageReport} = require("../controllers/villageReportController")
 router.post("/application/:id/approve", auth, adminOnly, approveApplication);
 router.post("/baseline/:id/approve", auth, adminOnly, approveBaseline);
 router.post(
@@ -16,5 +17,11 @@ router.post(
   rejectApplication
 );
 
+router.get(
+  "/villages/:id/report/pdf",
+  auth,
+  adminOnly,
+  downloadVillageReport
+);
 
 module.exports = router;
