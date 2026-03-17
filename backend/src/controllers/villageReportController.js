@@ -13,6 +13,7 @@ exports.downloadVillageReport = async (req, res) => {
       .populate("competition")
       .populate("user");
 
+
     if (!village) {
       return res.status(404).json({ message: "Village not found" });
     }
@@ -21,6 +22,7 @@ exports.downloadVillageReport = async (req, res) => {
       village: village._id
     }).populate("category");
 
+    console.log(submissions, "sub")
     // Create PDF
     const doc = new PDFDocument({ margin: 40, size: "A4" });
     res.setHeader("Content-Type", "application/pdf");

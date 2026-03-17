@@ -15,3 +15,17 @@ exports.adminOnly = (req,res,next)=>{
 if(req.user.role !== "admin") return res.status(403).json({message:"Admin only"});
 next();
 };
+
+exports.staffOnly = (req,res,next)=>{
+if(!["staff", "supervisor", "admin"].includes(req.user.role)) {
+  return res.status(403).json({message:"Staff access required"});
+}
+next();
+};
+
+exports.supervisorOnly = (req,res,next)=>{
+if(!["supervisor", "admin"].includes(req.user.role)) {
+  return res.status(403).json({message:"Supervisor or Admin access required"});
+}
+next();
+};

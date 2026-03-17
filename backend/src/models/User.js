@@ -3,7 +3,7 @@ const UserSchema = new mongoose.Schema({
 name: String,
 email: { type: String, unique: true },
 password: String,
-role: { type: String, enum: ["admin", "village"] },
+role: { type: String, enum: ["admin", "village", "staff", "supervisor"] },
 village: { type: mongoose.Schema.Types.ObjectId, ref: "Village" },
 resetPasswordToken: String,
   resetPasswordExpiry: Date

@@ -7,4 +7,5 @@ router.post(
   upload.single("letter"),
   applyVillage
 );
+
 module.exports = router;

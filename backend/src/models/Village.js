@@ -15,12 +15,20 @@ const VillageSchema = new mongoose.Schema({
   // baseline survey data
   baseline: Object,
 
+  // workflow version - v1: old two-step, v2: new single-step
+  workflowVersion: {
+    type: String,
+    enum: ["v1", "v2"],
+    default: "v1"
+  },
+
   status: {
     type: String,
     enum: [
       "applied",
-      "baseline_pending",
+      "baseline_pending", 
       "baseline_submitted",
+      "pending_approval", // new status for v2 workflow
       "active",
       "rejected"
     ],
@@ -33,6 +41,7 @@ const VillageSchema = new mongoose.Schema({
     "letter_uploaded",
     "criteria_selected",
     "baseline_completed",
+    "application_submitted", // new stage for v2 workflow
     "village_selected",
     "training_completed",
     "site_selected",

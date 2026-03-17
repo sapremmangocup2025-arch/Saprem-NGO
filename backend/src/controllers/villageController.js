@@ -181,3 +181,16 @@ exports.getMyCategorySubmission = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// Get all villages (for staff to select in forms)
+exports.getAllVillages = async (req, res) => {
+  try {
+    const villages = await Village.find()
+      .select('name _id')
+      .sort({ name: 1 });
+    
+    res.json({ villages });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

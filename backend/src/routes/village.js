@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { submitBaseline, getCategories, submitCategory, getMyCategorySubmission} = require("../controllers/villageController");
+const { submitBaseline, getCategories, submitCategory, getMyCategorySubmission, getAllVillages} = require("../controllers/villageController");
 const { auth } = require("../middleware/auth");
 const upload = require("../middleware/upload");
 
@@ -23,6 +23,8 @@ router.get(
   auth,
   getMyCategorySubmission
 );
+
+router.get("/all", auth, getAllVillages);
 
 
 module.exports = router;
