@@ -41,7 +41,7 @@ exports.createVisit = async (req, res) => {
 
     res.status(201).json({ 
       message: "Field visit recorded successfully", 
-      visit: await visit.populate('village staff')
+      visit: await visit.populate('staff')
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -65,7 +65,6 @@ exports.getAllVisits = async (req, res) => {
     }
 
     const visits = await FieldVisit.find(filter)
-      .populate('village', 'name')
       .populate('staff', 'name employeeId department')
       .populate('approvedBy', 'name')
       .sort({ visitDate: -1 });
@@ -96,7 +95,6 @@ exports.getMyVisits = async (req, res) => {
     }
 
     const visits = await FieldVisit.find(filter)
-      .populate('village', 'name')
       .populate('approvedBy', 'name')
       .sort({ visitDate: -1 });
 
@@ -110,7 +108,6 @@ exports.getMyVisits = async (req, res) => {
 exports.getVisitById = async (req, res) => {
   try {
     const visit = await FieldVisit.findById(req.params.id)
-      .populate('village', 'name')
       .populate('staff', 'name employeeId department')
       .populate('approvedBy', 'name');
 
@@ -164,7 +161,7 @@ exports.updateVisit = async (req, res) => {
       req.params.id,
       updateData,
       { new: true }
-    ).populate('village staff approvedBy');
+    ).populate('staff approvedBy');
 
     if (!visit) {
       return res.status(404).json({ message: "Visit not found" });
@@ -190,7 +187,7 @@ exports.approveVisit = async (req, res) => {
         updatedAt: Date.now()
       },
       { new: true }
-    ).populate('village staff approvedBy');
+    ).populate('staff approvedBy');
 
     if (!visit) {
       return res.status(404).json({ message: "Visit not found" });

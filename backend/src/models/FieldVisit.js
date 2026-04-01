@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const FieldVisitSchema = new mongoose.Schema({
-  village: { type: mongoose.Schema.Types.ObjectId, ref: "Village", required: true },
+  village: { type: String, required: true }, // Changed from ObjectId to String for village name
   staff: { type: mongoose.Schema.Types.ObjectId, ref: "Staff", required: true },
   visitDate: { type: Date, required: true },
   visitTime: { type: String, required: true },
