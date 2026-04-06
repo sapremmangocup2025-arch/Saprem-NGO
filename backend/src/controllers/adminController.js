@@ -279,3 +279,86 @@ exports.updateVillageStage = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+/**
+ * Delete village and all associated data
+ * This is a complete cleanup operation that removes:
+ * - Village document
+ * - Associated User account
+ * - All related submissions, activities, meetings, tasks
+ * - Village references from staff assignments
+ */
+exports.deleteVillage = async (req, res) => {
+  try {
+    const villageId = req.params.id;
+    
+    const village = await Village.findById(villageId);
+    if (!village) {
+      return res.status(404).json({ message: "Village not found" });
+    }
+
+    console.log(`🗑️ Starting deletion process for village: ${village.name} (${villageId})`);
+
+    // Import all required models
+    const VillageActivity = require("../models/VillageActivity");
+    const VillageSubmission = require("../models/VillageSubmission");
+    const StaffTask = require("../models/StaffTask");
+    const VillageMeeting = require("../models/VillageMeeting");
+    const Submission = require("../models/Submission");
+    const Staff = require("../models/Staff");
+
+    // 1. Delete associated User account
+    if (village.user) {
+      await User.findByIdAndDelete(village.user);
+      console.log(`👤 Deleted associated user: ${village.user}`);
+    }
+
+    // 2. Delete VillageActivity records
+    const deletedActivities = await VillageActivity.deleteMany({ village: villageId });
+    console.log(`🏃 Deleted ${deletedActivities.deletedCount} village activities`);
+
+    // 3. Delete VillageSubmission records
+    const deletedVillageSubmissions = await VillageSubmission.deleteMany({ village: villageId });
+    console.log(`📝 Deleted ${deletedVillageSubmissions.deletedCount} village submissions`);
+
+    // 4. Delete StaffTask records that reference this village
+    const deletedStaffTasks = await StaffTask.deleteMany({ village: villageId });
+    console.log(`📋 Deleted ${deletedStaffTasks.deletedCount} staff tasks`);
+
+    // 5. Delete VillageMeeting records
+    const deletedMeetings = await VillageMeeting.deleteMany({ village: villageId });
+    console.log(`🤝 Deleted ${deletedMeetings.deletedCount} village meetings`);
+
+    // 6. Delete Submission records
+    const deletedSubmissions = await Submission.deleteMany({ village: villageId });
+    console.log(`📄 Deleted ${deletedSubmissions.deletedCount} submissions`);
+
+    // 7. Remove village from Staff assignedVillages arrays
+    const updatedStaff = await Staff.updateMany(
+      { assignedVillages: villageId },
+      { $pull: { assignedVillages: villageId } }
+    );
+    console.log(`👥 Updated ${updatedStaff.modifiedCount} staff assignments`);
+
+    // 8. Finally, delete the village itself
+    await Village.findByIdAndDelete(villageId);
+    console.log(`🏘️ Deleted village: ${village.name}`);
+
+    res.json({
+      message: `Village "${village.name}" and all associated data deleted successfully`,
+      deletedData: {
+        village: 1,
+        user: village.user ? 1 : 0,
+        activities: deletedActivities.deletedCount,
+        villageSubmissions: deletedVillageSubmissions.deletedCount,
+        staffTasks: deletedStaffTasks.deletedCount,
+        meetings: deletedMeetings.deletedCount,
+        submissions: deletedSubmissions.deletedCount,
+        staffAssignments: updatedStaff.modifiedCount
+      }
+    });
+  } catch (error) {
+    console.error('❌ Error deleting village:', error);
+    res.status(500).json({ message: error.message });
+  }
+};

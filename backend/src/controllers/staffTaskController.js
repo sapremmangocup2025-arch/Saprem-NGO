@@ -31,7 +31,7 @@ exports.createTask = async (req, res) => {
 
     res.status(201).json({ 
       message: "Task created successfully", 
-      task: await task.populate('assignedTo assignedBy village')
+      task: await task.populate('assignedTo assignedBy')
     });
   } catch (error) {
     console.error('❌ Error creating task:', error);
@@ -55,7 +55,6 @@ exports.getAllTasks = async (req, res) => {
     const tasks = await StaffTask.find(filter)
       .populate('assignedTo', 'name employeeId department')
       .populate('assignedBy', 'name')
-      .populate('village', 'name')
       .sort({ createdAt: -1 });
 
     res.json({ tasks });
@@ -85,7 +84,6 @@ exports.getMyTasks = async (req, res) => {
 
     const tasks = await StaffTask.find(filter)
       .populate('assignedBy', 'name')
-      .populate('village', 'name')
       .sort({ priority: -1, startDate: 1 });
 
     console.log(`📋 Found ${tasks.length} tasks for staff ${staff.name}`);
@@ -102,8 +100,7 @@ exports.getTaskById = async (req, res) => {
   try {
     const task = await StaffTask.findById(req.params.id)
       .populate('assignedTo', 'name employeeId department')
-      .populate('assignedBy', 'name')
-      .populate('village', 'name');
+      .populate('assignedBy', 'name');
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
@@ -141,7 +138,7 @@ exports.updateTask = async (req, res) => {
       req.params.id,
       updateData,
       { new: true }
-    ).populate('assignedTo assignedBy village');
+    ).populate('assignedTo assignedBy');
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
@@ -168,7 +165,7 @@ exports.updateTaskStatus = async (req, res) => {
       req.params.id,
       updateData,
       { new: true }
-    ).populate('assignedTo assignedBy village');
+    ).populate('assignedTo assignedBy');
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });

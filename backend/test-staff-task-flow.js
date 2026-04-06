@@ -52,17 +52,16 @@ const testStaffTaskFlow = async () => {
 
   // 3. Find tasks assigned to this staff
   const tasks = await StaffTask.find({ assignedTo: staffProfile._id })
-    .populate('assignedBy', 'name')
-    .populate('village', 'name');
+    .populate('assignedBy', 'name');
   
   console.log(`3️⃣ Found ${tasks.length} tasks assigned to this staff:`);
   tasks.forEach((task, index) => {
     console.log(`   Task ${index + 1}:`, {
       title: task.title,
       status: task.status,
-      priority: task.priority,
+      priority: task.priority || 'Not set',
       assignedBy: task.assignedBy?.name,
-      village: task.village?.name
+      village: task.village || 'Not specified' // Now a string field
     });
   });
 
@@ -81,8 +80,45 @@ const testStaffTaskFlow = async () => {
     });
   });
 
-  // 5. Check if there's a mismatch
-  console.log('\n5️⃣ Checking for mismatches...');
+  // 5. Test creating a new task with the updated structure
+  console.log('\n5️⃣ Testing new task creation...');
+  
+  // Find an admin user to assign the task
+  const adminUser = await User.findOne({ role: 'admin' });
+  if (!adminUser) {
+    console.log('   ⚠️  No admin user found, skipping task creation test');
+  } else {
+    try {
+      const newTask = await StaffTask.create({
+        title: 'Test Task - Updated Structure',
+        description: 'Testing the new task structure without priority requirement and with village as string',
+        assignedTo: staffProfile._id,
+        assignedBy: adminUser._id,
+        village: 'Test Village Name', // String instead of ObjectId
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+        // Note: priority is now optional and not included
+      });
+      
+      console.log('   ✅ Successfully created new task:', {
+        id: newTask._id,
+        title: newTask.title,
+        village: newTask.village,
+        priority: newTask.priority || 'Not set (optional)',
+        status: newTask.status
+      });
+      
+      // Clean up - delete the test task
+      await StaffTask.findByIdAndDelete(newTask._id);
+      console.log('   🧹 Test task cleaned up');
+      
+    } catch (error) {
+      console.log('   ❌ Failed to create test task:', error.message);
+    }
+  }
+
+  // 6. Check for mismatches
+  console.log('\n6️⃣ Checking for mismatches...');
   const mismatchedTasks = allTasks.filter(task => {
     return task.assignedTo && task.assignedTo._id.toString() !== staffProfile._id.toString();
   });

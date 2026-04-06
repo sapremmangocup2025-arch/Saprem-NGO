@@ -6,11 +6,11 @@ const StaffTaskSchema = new mongoose.Schema({
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: "Staff", required: true },
   assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   project: { type: String },
-  village: { type: mongoose.Schema.Types.ObjectId, ref: "Village" },
+  village: { type: String }, // Changed to String to store village name manually
   priority: { 
     type: String, 
     enum: ["Low", "Medium", "High", "Urgent"],
-    default: "Medium"
+    default: "Medium" // Keep for backward compatibility, but not required
   },
   status: { 
     type: String, 

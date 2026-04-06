@@ -34,12 +34,16 @@ app.use("/api/staff", require("./src/routes/staff"));
 app.use("/api/attendance", require("./src/routes/attendance"));
 app.use("/api/staff-tasks", require("./src/routes/staffTask"));
 app.use("/api/daily-reports", require("./src/routes/dailyWorkReport"));
+app.use("/api/daily-updates", require("./src/routes/dailyUpdate"));
 app.use("/api/field-visits", require("./src/routes/fieldVisit"));
 app.use("/api/village-meetings", require("./src/routes/villageMeeting"));
 app.use("/api/staff-reports", require("./src/routes/staffReport"));
 
 // PDF Generation Routes
 app.use("/api/pdf", require("./src/routes/pdf"));
+
+// Dashboard Routes
+app.use("/api/dashboard", require("./src/routes/dashboard"));
 
 // Upload Routes
 app.use("/api/upload", require("./src/routes/upload"));
